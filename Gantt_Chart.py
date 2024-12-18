@@ -47,38 +47,29 @@ data = {
     ]
 }
 
-# Membuat DataFrame dari data
 df = pd.DataFrame(data)
 
-# Mengubah kolom Start dan Finish menjadi format datetime
 df['Start'] = pd.to_datetime(df['Start'])
 df['Finish'] = pd.to_datetime(df['Finish'])
 
-# Menghitung durasi setiap tugas
 df['Duration'] = (df['Finish'] - df['Start']).dt.days + 1
 
-# Mengatur posisi untuk setiap task
 df['Task_Position'] = range(len(df))
 
-# Menentukan warna untuk setiap batang
 colors = plt.cm.tab20(np.linspace(0, 1, len(df)))
 
-# Membuat Gantt Chart
 plt.figure(figsize=(14, 8))
 plt.barh(df['Task_Position'], df['Duration'], left=df['Start'].map(pd.Timestamp.toordinal), color=colors)
 
-# Menambahkan label dan pengaturan sumbu
 plt.yticks(df['Task_Position'], df['Task'], fontsize=10)
 plt.xlabel('Tanggal', fontsize=12)
 plt.title('Gantt Chart Proyek Perangkat Lunak', fontsize=14, fontweight='bold')
 plt.grid(axis='x', linestyle='--', alpha=0.7)
 
-# Mengatur format tanggal di sumbu x
 plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b %Y'))
 plt.xticks(rotation=45)
 
-# Menambahkan anotasi durasi di atas setiap batang
 for index, row in df.iterrows():
     plt.text(row['Start'].toordinal() + row['Duration']/2, index, str(row['Duration']), 
              ha='center', va='center', color='white', fontsize=10, fontweight='bold')
